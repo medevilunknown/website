@@ -1,24 +1,32 @@
 import React, { useMemo, useState } from "react";
+import {
+  Eye,
+  LayoutGrid,
+  Users,
+  Cpu,
+  Info,
+  Briefcase,
+} from "lucide-react";
 import { playHover, playClick } from "../hooks/useSound";
 
 const ITEMS = [
-  { key: "vision", label: "Vision" },
-  { key: "projects", label: "Projects" },
-  { key: "people", label: "People" },
-  { key: "nexus", label: "Nexus" },
-  { key: "about", label: "About" },
-  { key: "careers", label: "Careers" },
+  { key: "vision", label: "Vision", Icon: Eye },
+  { key: "projects", label: "Projects", Icon: LayoutGrid },
+  { key: "people", label: "People", Icon: Users },
+  { key: "nexus", label: "Nexus", Icon: Cpu },
+  { key: "about", label: "About", Icon: Info },
+  { key: "careers", label: "Careers", Icon: Briefcase },
 ];
 
 export default function RadialMenu({ onSelect, mouse }) {
   const [hovered, setHovered] = useState(null);
 
   const radius = useMemo(() => {
-    if (typeof window === "undefined") return 280;
+    if (typeof window === "undefined") return 300;
     const w = window.innerWidth;
-    if (w < 640) return 145;
-    if (w < 1024) return 210;
-    return 290;
+    if (w < 640) return 150;
+    if (w < 1024) return 220;
+    return 300;
   }, []);
 
   const parX = (mouse?.x || 0) * 14;
@@ -29,21 +37,11 @@ export default function RadialMenu({ onSelect, mouse }) {
       className="fixed inset-0 z-20 flex items-center justify-center pointer-events-none"
       data-testid="radial-menu"
     >
-      {/* Center label: only visible on mobile where 3D piece is small */}
-      <div
-        className="absolute pointer-events-none font-display text-xs md:text-sm uppercase tracking-[0.5em] text-[#60A5FA] opacity-70 select-none"
-        style={{
-          transform: `translate(${parX * 0.4}px, ${parY * 0.4 + radius + 40}px)`,
-          transition: "transform 300ms ease-out",
-        }}
-      >
-        drag to rotate
-      </div>
-
       {ITEMS.map((it, i) => {
         const angle = (i / ITEMS.length) * Math.PI * 2 - Math.PI / 2;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
+        const { Icon } = it;
         const isHover = hovered === it.key;
         return (
           <button
@@ -68,24 +66,29 @@ export default function RadialMenu({ onSelect, mouse }) {
               transition: "transform 350ms cubic-bezier(.2,.8,.2,1)",
             }}
           >
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-2">
               <span
-                className={`w-1.5 h-1.5 rounded-full mb-3 transition-all ${
-                  isHover
-                    ? "bg-[#60A5FA] scale-150"
-                    : "bg-[#8B9BB4] group-hover:bg-[#60A5FA]"
+                className={`flex items-center justify-center w-11 h-11 md:w-12 md:h-12 transition-all duration-300 ${
+                  isHover ? "scale-110" : "scale-100"
                 }`}
-                style={{ boxShadow: isHover ? "0 0 12px #60A5FA" : "none" }}
-              />
+                style={{
+                  color: isHover ? "#60A5FA" : "#E8EEF5",
+                  filter: isHover
+                    ? "drop-shadow(0 0 12px rgba(96,165,250,0.7))"
+                    : "none",
+                }}
+              >
+                <Icon size={22} strokeWidth={1.5} />
+              </span>
               <span
-                className={`font-display uppercase tracking-[0.25em] text-xs md:text-sm transition-colors ${
-                  isHover ? "text-[#60A5FA] glow-text" : "text-[#E8EEF5]"
+                className={`font-display uppercase tracking-[0.22em] text-xs transition-colors ${
+                  isHover ? "text-[#60A5FA]" : "text-[#E8EEF5]"
                 }`}
               >
                 {it.label}
               </span>
               <span
-                className={`mt-1 h-px bg-[#60A5FA] transition-all duration-300 ${
+                className={`h-px bg-[#60A5FA] transition-all duration-300 ${
                   isHover ? "w-8 opacity-100" : "w-0 opacity-0"
                 }`}
               />

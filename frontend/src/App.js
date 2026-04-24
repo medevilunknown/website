@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import "@/App.css";
 import NeuralBackground from "@/components/NeuralBackground";
 import HomeCenterPiece from "@/components/HomeCenterPiece";
-import BootLoader from "@/components/BootLoader";
+import IntroAnimation from "@/components/IntroAnimation";
 import RadialMenu from "@/components/RadialMenu";
-import SoundToggle from "@/components/SoundToggle";
+import PageNavigator from "@/components/PageNavigator";
+import Logo from "@/components/Logo";
 import Vision from "@/components/sections/Vision";
 import Projects from "@/components/sections/Projects";
 import People from "@/components/sections/People";
@@ -26,13 +27,24 @@ function HUD() {
   }, []);
   return (
     <>
-      <div className="fixed top-5 md:top-8 left-5 md:left-10 z-30 font-display text-sm md:text-base font-semibold tracking-widest text-[#E8EEF5] select-none">
-        OPYO
+      <div
+        className="fixed top-5 md:top-8 left-5 md:left-10 z-30 flex items-center gap-3 select-none"
+        data-testid="hud-brand"
+      >
+        <Logo size={26} glow />
+        <div className="flex flex-col leading-none">
+          <span className="font-display text-sm md:text-base font-semibold tracking-[0.2em] text-[#E8EEF5]">
+            OPYO
+          </span>
+          <span className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.35em] text-[#60A5FA] mt-1">
+            studio
+          </span>
+        </div>
       </div>
       <div className="fixed top-5 md:top-8 right-5 md:right-10 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.28em] text-[#8B9BB4] select-none">
         {ts}
       </div>
-      <div className="fixed bottom-5 md:bottom-8 left-5 md:left-10 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.28em] text-[#8B9BB4] select-none">
+      <div className="fixed bottom-5 md:bottom-8 left-5 md:left-10 z-30 font-mono text-[9px] md:text-[10px] uppercase tracking-[0.28em] text-[#8B9BB4] select-none max-w-[160px] md:max-w-none">
         four systems · one ecosystem
       </div>
     </>
@@ -51,6 +63,7 @@ const SECTIONS = {
 function App() {
   const [booted, setBooted] = useState(false);
   const [active, setActive] = useState(null);
+  const [muted, setMuted] = useState(false);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const rafRef = useRef(null);
 
@@ -71,25 +84,52 @@ function App() {
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") setActive(null);
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        setActive((a) => {
+          const order = ["vision", "projects", "people", "nexus", "about", "careers"];
+          if (a == null) return order[0];
+          return order[(order.indexOf(a) + 1) % order.length];
+        });
+      }
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        setActive((a) => {
+          const order = ["vision", "projects", "people", "nexus", "about", "careers"];
+          if (a == null) return order[order.length - 1];
+          return order[(order.indexOf(a) - 1 + order.length) % order.length];
+        });
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  const toggleMute = () => {
+    setMuted((m) => {
+      const next = !m;
+      if (typeof window !== "undefined") window.__OPYO_MUTE__ = next;
+      return next;
+    });
+  };
 
   const ActiveSection = active ? SECTIONS[active] : null;
 
   return (
     <div className="App">
       <SoundRegistrar />
-      {!booted && <BootLoader onDone={() => setBooted(true)} />}
+      {!booted && <IntroAnimation onDone={() => setBooted(true)} />}
       {booted && (
         <>
           <NeuralBackground />
-          <HomeCenterPiece />
+          {!active && <HomeCenterPiece />}
           <HUD />
-          <RadialMenu mouse={mouse} onSelect={(k) => setActive(k)} />
-          <SoundToggle />
-          {ActiveSection && <ActiveSection onClose={() => setActive(null)} />}
+          {!active && <RadialMenu mouse={mouse} onSelect={(k) => setActive(k)} />}
+          {ActiveSection && <ActiveSection />}
+          <PageNavigator
+            active={active}
+            onSelect={setActive}
+            muted={muted}
+            onToggleMute={toggleMute}
+          />
         </>
       )}
     </div>
