@@ -16,8 +16,8 @@ function Chat() {
   }, []);
   return (
     <div className="space-y-2.5 font-mono text-xs">
-      {SEQ.slice(0, n).map((m, i) => (
-        <div key={i} className="flex gap-3">
+      {SEQ.slice(0, n).map((m) => (
+        <div key={`${m.who}-${m.text}`} className="flex gap-3">
           <span
             className={`shrink-0 uppercase tracking-[0.25em] ${
               m.who === "nexus" ? "text-[#60A5FA]" : "text-[#8B9BB4]"
@@ -85,9 +85,9 @@ function Terminal() {
   }, []);
   return (
     <div className="font-mono text-xs leading-[1.7] space-y-0.5">
-      {lines.map((l, i) => (
+      {lines.map((l) => (
         <div
-          key={i}
+          key={l}
           className={
             l.startsWith("nexus@")
               ? "text-[#60A5FA]"

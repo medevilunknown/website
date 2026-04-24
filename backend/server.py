@@ -181,10 +181,10 @@ async def submit_application(payload: CareerApplicationCreate):
 @api_router.get("/careers/applications", response_model=List[CareerApplication])
 async def list_applications():
     docs = await db.career_applications.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
-    for d in docs:
-        if isinstance(d.get("created_at"), str):
-            d["created_at"] = datetime.fromisoformat(d["created_at"])
-    return [CareerApplication(**d) for d in docs]
+    for doc in docs:
+        if isinstance(doc.get("created_at"), str):
+            doc["created_at"] = datetime.fromisoformat(doc["created_at"])
+    return [CareerApplication(**doc) for doc in docs]
 
 
 # Include the router in the main app

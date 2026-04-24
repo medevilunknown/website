@@ -47,9 +47,9 @@ export default function About({ onClose }) {
           Timeline
         </div>
         <div>
-          {TIMELINE.map((e, i) => (
+          {TIMELINE.map((e) => (
             <div
-              key={i}
+              key={e.y}
               className="border-t border-[#1E293B] py-7 md:py-8 grid grid-cols-12 gap-6 items-baseline"
             >
               <div className="col-span-2 md:col-span-1 font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA]">
