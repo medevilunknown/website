@@ -53,39 +53,33 @@ function IntroScene({ progressRef }) {
     });
     const streaks = new THREE.LineSegments(segGeo, segMat);
 
-    // --- Icosahedron (wireframe + solid) ---------------------------------
-    const icoGeo = new THREE.IcosahedronGeometry(2.3, 1);
-    const icoEdges = new THREE.EdgesGeometry(icoGeo);
-    const icoLineMat = new THREE.LineBasicMaterial({
+    // --- Orbital ring (replaces the icosahedron — pulses behind the logo) ---
+    const ringGeo = new THREE.RingGeometry(2.0, 2.08, 128);
+    const ringMat = new THREE.MeshBasicMaterial({
       color: 0x60a5fa,
       transparent: true,
       opacity: 0,
+      side: THREE.DoubleSide,
       depthWrite: false,
     });
-    const icoWire = new THREE.LineSegments(icoEdges, icoLineMat);
-
-    const icoSolidMat = new THREE.MeshBasicMaterial({
-      color: 0x0b1220,
+    const ringA = new THREE.Mesh(ringGeo, ringMat);
+    const ringBMat = new THREE.MeshBasicMaterial({
+      color: 0x3b82f6,
       transparent: true,
       opacity: 0,
+      side: THREE.DoubleSide,
       depthWrite: false,
     });
-    const icoSolid = new THREE.Mesh(icoGeo, icoSolidMat);
-
-    const halo = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.55, 1)),
-      new THREE.LineBasicMaterial({
-        color: 0x3b82f6,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-      })
+    const ringB = new THREE.Mesh(
+      new THREE.RingGeometry(2.5, 2.55, 128),
+      ringBMat
     );
+    ringB.rotation.x = 0.4;
+    ringB.rotation.y = 0.2;
 
-    const icoGroup = new THREE.Group();
-    icoGroup.add(icoSolid);
-    icoGroup.add(icoWire);
-    icoGroup.add(halo);
+    const ringGroup = new THREE.Group();
+    ringGroup.add(ringA);
+    ringGroup.add(ringB);
 
     // central flare point
     const flareGeo = new THREE.BufferGeometry();
@@ -111,10 +105,9 @@ function IntroScene({ progressRef }) {
       basePos,
       speeds,
       COUNT,
-      icoGroup,
-      icoWire,
-      icoSolid,
-      halo,
+      ringGroup,
+      ringMat,
+      ringBMat,
       flare,
       flareMat,
     };
@@ -122,17 +115,17 @@ function IntroScene({ progressRef }) {
 
   useEffect(() => {
     scene.add(built.streaks);
-    scene.add(built.icoGroup);
+    scene.add(built.ringGroup);
     scene.add(built.flare);
     builtRef.current = built;
     return () => {
       scene.remove(built.streaks);
-      scene.remove(built.icoGroup);
+      scene.remove(built.ringGroup);
       scene.remove(built.flare);
     };
   }, [scene, built]);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     const b = builtRef.current;
     if (!b) return;
     const p = progressRef.current; // 0 → 1
@@ -166,21 +159,20 @@ function IntroScene({ progressRef }) {
     const camZ = 12 - p * 2.5;
     camera.position.z = camZ;
 
-    // Icosahedron assembly: from 0% scale to 1 between 0.28 and 0.65 progress
+    // Ring halo assembly: fades in 0.28 → 0.65, pulses, rotates
     const t1 = Math.min(1, Math.max(0, (p - 0.28) / 0.37));
     const scale = t1 * t1 * (3 - 2 * t1); // smoothstep
-    b.icoGroup.scale.setScalar(scale * 1.0);
+    const pulse = 1 + Math.sin(state.clock.elapsedTime * 2.2) * 0.05;
+    b.ringGroup.scale.setScalar(scale * pulse);
 
-    // icosahedron rotates steadily
-    b.icoGroup.rotation.y += delta * 1.2 * (1 - p * 0.6);
-    b.icoGroup.rotation.x += delta * 0.5 * (1 - p * 0.6);
+    b.ringGroup.rotation.z += delta * 0.25;
+    b.ringGroup.children[1].rotation.z -= delta * 0.18;
 
-    // Wireframe fades in during assembly, halo fades after
-    b.icoWire.material.opacity = Math.min(1, t1 * 1.2) * 0.9;
-    b.icoSolid.material.opacity = Math.min(1, t1 * 1.2) * 0.55;
-    b.halo.material.opacity = Math.min(1, Math.max(0, (p - 0.5) / 0.3)) * 0.25;
+    b.ringMat.opacity = Math.min(1, t1 * 1.4) * 0.55;
+    b.ringBMat.opacity =
+      Math.min(1, Math.max(0, (p - 0.45) / 0.3)) * 0.35;
 
-    // flare bright at start, fades out as ico materialises
+    // flare bright at start, fades out as ring materialises
     const flareAmt = Math.max(0, 1 - p * 2.2);
     b.flareMat.opacity = flareAmt;
     b.flareMat.size = 0.4 + flareAmt * 2.2;
@@ -188,9 +180,8 @@ function IntroScene({ progressRef }) {
     // Fade everything near the end
     const endFade = Math.max(0, Math.min(1, (p - 0.88) / 0.12));
     if (endFade > 0) {
-      b.icoWire.material.opacity *= 1 - endFade;
-      b.icoSolid.material.opacity *= 1 - endFade;
-      b.halo.material.opacity *= 1 - endFade;
+      b.ringMat.opacity *= 1 - endFade;
+      b.ringBMat.opacity *= 1 - endFade;
       b.streaks.material.opacity *= 1 - endFade;
       b.flareMat.opacity *= 1 - endFade;
     }
@@ -289,65 +280,66 @@ export default function IntroAnimation({ onDone }) {
         </button>
       </div>
 
-      {/* Center text reveals */}
+      {/* Center reveals */}
       <div className="relative z-10 flex-1 flex items-center justify-center">
-        <div className="text-center pointer-events-none select-none">
+        <div className="text-center pointer-events-none select-none flex flex-col items-center">
+          {/* Logo — visible stage 0 & 1, dims/shrinks stage 2 */}
           <div
-            className="flex items-center justify-center gap-6 md:gap-10 transition-all duration-1000 ease-out"
+            className="transition-all duration-700 ease-out"
             style={{
-              opacity: stage === 0 ? 1 : 0.12,
-              transform: stage === 0 ? "scale(1)" : "scale(0.95)",
-              filter: stage === 0 ? "none" : "blur(4px)",
+              opacity: stage < 2 ? 1 : 0.2,
+              transform: stage < 2 ? "scale(1)" : "scale(0.85)",
+              filter: stage < 2 ? "none" : "blur(2px)",
             }}
           >
             <Logo
-              size={220}
+              size={280}
               glow
-              className="hidden md:inline-block text-[#E8EEF5] opacity-95"
+              className="hidden md:inline-block text-[#E8EEF5]"
             />
             <Logo
-              size={120}
+              size={160}
               glow
-              className="md:hidden inline-block text-[#E8EEF5] opacity-95"
+              className="md:hidden inline-block text-[#E8EEF5]"
             />
-            <div
-              className="font-display font-bold tracking-tighter leading-[0.85]"
-              style={{
-                fontSize: "clamp(70px, 13vw, 220px)",
-                letterSpacing: "-0.04em",
-              }}
-            >
-              O<span className="text-[#60A5FA] glow-text">P</span>Y
-              <span className="text-[#60A5FA] glow-text">O</span>
-            </div>
           </div>
+
+          {/* OPYO STUDIO wordmark — visible stage 0, fades stage 1+ */}
           <div
-            className="font-mono uppercase tracking-[0.5em] text-[#60A5FA] mt-5 transition-opacity duration-700"
+            className="font-display font-bold tracking-[0.2em] mt-8 md:mt-10 transition-all duration-700"
             style={{
-              fontSize: "clamp(11px, 1.1vw, 16px)",
-              opacity: stage === 0 ? 1 : 0.12,
+              fontSize: "clamp(32px, 5vw, 72px)",
+              letterSpacing: "0.15em",
+              opacity: stage === 0 ? 1 : 0,
+              transform: stage === 0 ? "translateY(0)" : "translateY(-10px)",
+              height: stage === 0 ? "auto" : 0,
             }}
           >
-            studio
+            OPYO <span className="text-[#60A5FA] glow-text">STUDIO</span>
           </div>
+
+          {/* Tagline — visible stage 1 only */}
           <div
-            className="font-display font-semibold tracking-tight leading-tight transition-all duration-700 ease-out mt-10"
+            className="font-display font-semibold tracking-tight leading-tight mt-8 md:mt-10 transition-all duration-700 ease-out"
             style={{
               fontSize: "clamp(22px, 3.2vw, 52px)",
-              opacity: stage >= 1 && stage < 2 ? 1 : 0,
-              transform: stage >= 1 ? "translateY(0)" : "translateY(20px)",
+              opacity: stage === 1 ? 1 : 0,
+              transform: stage === 1 ? "translateY(0)" : "translateY(20px)",
               letterSpacing: "-0.02em",
+              position: stage === 1 ? "relative" : "absolute",
+              pointerEvents: "none",
             }}
           >
             Four systems.{" "}
             <span className="text-[#60A5FA] glow-text">One ecosystem.</span>
           </div>
+
+          {/* Entering cursor — stage 2 */}
           <div
-            className="font-mono uppercase tracking-[0.4em] text-[#60A5FA] transition-all duration-500 mt-10"
+            className="font-mono uppercase tracking-[0.4em] text-[#60A5FA] mt-8 md:mt-10 transition-all duration-500"
             style={{
               fontSize: "clamp(10px, 1vw, 14px)",
               opacity: stage === 2 ? 1 : 0,
-              transform: stage === 2 ? "translateY(0)" : "translateY(10px)",
             }}
           >
             <span className="cursor-blink">entering ecosystem</span>
