@@ -1,0 +1,53 @@
+{
+  "summary": "End-to-end testing of OPYO Studio MVP. Backend: 11/11 pytest cases pass (root, health, seed projects x6, seed people x6, careers apply valid/invalid/optional-portfolio, validation of short name & short message, applications listing sorted desc, no _id leak). Frontend: Boot loader renders with skip button and percentage counter; after skip the radial menu + OPYO core are fully visible with all 6 items (vision, projects, people, nexus, about, careers) correctly positioned; neural 3D canvas present; all 6 sections open with correct titles, close via X button and via ESC key; Projects section renders 6 cards from /api/projects; People section renders 6 cards from /api/people; Careers form submits valid data to /api/careers/apply and shows 'Signal received.' + 'Welcome to the waitlist.' success state; invalid email is blocked by HTML5 native validation preventing submission. No uncaught console errors, no R3F runtime errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "SoundToggle",
+        "issue": "Sound toggle button at fixed bottom:5/right:5 (1860,1020) is visually overlapped in the preview environment by the 'Made with Emergent' preview badge (bottom-right). elementFromPoint at the toggle's center returns a <p> from the badge, so normal user clicks may be intercepted in the preview. Functionally the onClick works (JS dispatch / force-click correctly sets window.__OPYO_MUTE__ to true/false). This will not affect production where the Emergent badge is not present, but consider moving the toggle to bottom-right with a right offset like right:16 bottom:16 that keeps it clear, or to bottom-left/top-right.",
+        "selector": "[data-testid='sound-toggle']",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Careers form (invalid email)",
+        "issues": ["Invalid email submission is blocked only by the browser's native HTML5 validation tooltip (type=email + required). There is no custom in-form error message rendered by the component. Spec asked for 'error message inside form'. Current behaviour is functional but depends entirely on native browser UX. Consider rendering a custom inline error for a more polished, branded experience."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_opyo_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Optional: reposition SoundToggle (or raise z-index above preview badge) so the click target is not overlapped by the 'Made with Emergent' badge in the preview environment.",
+    "Optional: render an explicit in-form error message for invalid email in Careers.jsx (currently relies on native HTML5 validation tooltip).",
+    "No action required for core features — backend and frontend flows all working end-to-end."
+  ],
+  "critical_code_review_comments": [
+    "server.py stores CareerApplication.created_at as an ISO string in Mongo but reads it back as a datetime via fromisoformat before returning — consistent, no _id leak (uses projection {_id: 0}). Good.",
+    "Pydantic validators use EmailStr + min/max length correctly; 422 returned as expected.",
+    "Seed-on-startup is idempotent (checks count_documents == 0).",
+    "SoundToggle positional collision with preview overlay noted above.",
+    "No data-testid missing — all interactive elements tested had them."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_opyo_api.py (created)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100% (core flows); sound-toggle click intercepted by preview badge but functionally works"
+  },
+  "test_credentials": "N/A - app has no authentication",
+  "seed_data_creation": "Backend auto-seeds on startup (6 projects, 6 people). Tests created a few TEST_-prefixed career applications in MongoDB; not cleaned up (list endpoint only, no delete endpoint exposed).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest suite lives at /app/backend/tests/test_opyo_api.py and can be run with: pytest backend/tests/test_opyo_api.py -v. All 11 tests pass against the public URL from REACT_APP_BACKEND_URL. Frontend is fully functional: use [data-testid='boot-skip-button'] to skip the 8-10s boot loader. All radial items and sections work. Known preview-only issue: 'Made with Emergent' badge overlaps sound-toggle — use force=True + position or JS .click() in Playwright if you need to click it.",
+  "rca of the issue": "SoundToggle click interception — root cause: component uses `fixed bottom-5 right-5 z-40` (Tailwind) while the Emergent preview badge is injected in the bottom-right at a higher stacking context. elementFromPoint confirmed a <p> from the badge is receiving clicks. Mitigation: either (a) move toggle to a different corner, (b) add bottom-right offset (e.g., bottom:5 right:20) so it sits left of the badge, or (c) raise z-index above the preview overlay. Production will not have the Emergent badge, so this is preview-only."
+}
