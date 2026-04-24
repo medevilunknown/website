@@ -11,19 +11,35 @@ const FALLBACK = [
   { name: "Operator 06", role: "Design Lead", bio: "Human-system interfaces." },
 ];
 
-function Initials({ name }) {
-  const parts = name.split(" ");
-  const letters = (parts[0]?.[0] || "O") + (parts[1]?.[0] || "P");
+function Avatar({ index }) {
+  const num = String(index + 1).padStart(2, "0");
   return (
     <div
-      className="w-full aspect-square flex items-center justify-center font-display text-5xl md:text-6xl font-bold text-[#E8EEF5] glow-text relative"
+      className="w-full aspect-[4/5] flex items-end p-6 relative overflow-hidden"
       style={{
         background:
-          "radial-gradient(circle at 50% 35%, rgba(59,130,246,0.25), transparent 60%), linear-gradient(180deg, #0C0E12 0%, #060708 100%)",
+          "radial-gradient(ellipse at 50% 20%, rgba(59,130,246,0.22), transparent 65%), linear-gradient(180deg, #0C0E12 0%, #060708 100%)",
       }}
     >
-      <div className="absolute inset-0 bg-grid opacity-30" />
-      <span className="relative">{letters}</span>
+      <div
+        className="absolute inset-0 opacity-[0.08]"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, transparent 96%, rgba(96,165,250,0.4) 100%), linear-gradient(90deg, transparent 96%, rgba(96,165,250,0.4) 100%)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+      <div
+        className="absolute top-5 left-5 font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA]"
+      >
+        /{num}
+      </div>
+      <span
+        className="relative font-display font-bold text-[#E8EEF5] glow-text"
+        style={{ fontSize: "clamp(64px, 11vw, 140px)", lineHeight: 0.8, letterSpacing: "-0.04em" }}
+      >
+        {num}
+      </span>
     </div>
   );
 }
@@ -39,36 +55,36 @@ export default function People({ onClose }) {
 
   return (
     <SectionShell
-      code="OPYO.PEOPLE"
+      code="PPL / 03"
+      eyebrow="People"
       title={
         <>
           The<br />
           <span className="text-[#60A5FA] glow-text">operators.</span>
         </>
       }
-      tagline="A small cell of engineers, designers, and directors. Placeholder identities shown — real crew ships soon."
+      tagline="A small cell building the infrastructure behind the ecosystem."
       onClose={onClose}
     >
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
         {people.map((p, i) => (
           <div
             key={p.id || i}
             data-testid={`person-card-${i}`}
-            className="glass relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:glow-border group"
+            className="group"
           >
-            <div className="absolute top-2 left-2 z-10 font-mono text-[10px] uppercase tracking-[0.25em] text-[#60A5FA]">
-              /{String(i + 1).padStart(2, "0")}
-            </div>
-            <Initials name={p.name} />
-            <div className="p-4 md:p-5 hairline-t">
-              <div className="font-display text-lg md:text-xl font-semibold leading-tight">
-                {p.name}
+            <Avatar index={i} />
+            <div className="pt-5 border-t border-[#1E293B] group-hover:border-[#60A5FA] transition-colors">
+              <div className="flex items-baseline justify-between mb-2">
+                <div
+                  className="font-display text-lg md:text-xl font-semibold text-[#E8EEF5]"
+                  style={{ letterSpacing: "-0.01em" }}
+                >
+                  {p.name}
+                </div>
               </div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#60A5FA] mt-1">
+              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-[#60A5FA]">
                 {p.role}
-              </div>
-              <div className="text-xs md:text-sm text-[#8B9BB4] mt-3 leading-relaxed">
-                {p.bio}
               </div>
             </div>
           </div>

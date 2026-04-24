@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@/App.css";
 import NeuralBackground from "@/components/NeuralBackground";
+import HomeCenterPiece from "@/components/HomeCenterPiece";
 import BootLoader from "@/components/BootLoader";
 import RadialMenu from "@/components/RadialMenu";
 import SoundToggle from "@/components/SoundToggle";
@@ -12,38 +13,28 @@ import About from "@/components/sections/About";
 import Careers from "@/components/sections/Careers";
 import { SoundRegistrar } from "@/hooks/useSound";
 
-function HUD({ mouse }) {
-  const now = new Date();
-  const ts = now.toISOString().replace("T", " ").slice(0, 19);
+function HUD() {
+  const [ts, setTs] = useState(() =>
+    new Date().toISOString().replace("T", " ").slice(0, 19)
+  );
+  useEffect(() => {
+    const t = setInterval(
+      () => setTs(new Date().toISOString().replace("T", " ").slice(0, 19)),
+      1000
+    );
+    return () => clearInterval(t);
+  }, []);
   return (
     <>
-      {/* Top-left */}
-      <div className="fixed top-5 left-5 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-[#8B9BB4] select-none">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA] pulse-dot" />
-          <span className="text-[#E8EEF5]">OPYO</span>
-          <span className="text-[#1E293B]">//</span>
-          <span>studio</span>
-        </div>
-        <div className="mt-1 text-[#1E293B]">v0.1.0 • core:online</div>
+      <div className="fixed top-5 md:top-8 left-5 md:left-10 z-30 font-display text-sm md:text-base font-semibold tracking-widest text-[#E8EEF5] select-none">
+        OPYO
       </div>
-      {/* Top-right */}
-      <div className="fixed top-5 right-5 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-[#8B9BB4] text-right select-none">
-        <div>{ts} utc</div>
-        <div className="text-[#1E293B] mt-1">
-          cursor: {(mouse?.x * 100 | 0)}, {(mouse?.y * 100 | 0)}
-        </div>
+      <div className="fixed top-5 md:top-8 right-5 md:right-10 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.28em] text-[#8B9BB4] select-none">
+        {ts}
       </div>
-      {/* Bottom-left */}
-      <div className="fixed bottom-5 left-5 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-[#8B9BB4] select-none">
-        <div className="cursor-blink">drag &amp; hold to explore</div>
+      <div className="fixed bottom-5 md:bottom-8 left-5 md:left-10 z-30 font-mono text-[10px] md:text-xs uppercase tracking-[0.28em] text-[#8B9BB4] select-none">
+        four systems · one ecosystem
       </div>
-      {/* Corner frames */}
-      <div className="pointer-events-none fixed inset-4 z-10 hairline" />
-      <div className="pointer-events-none fixed top-4 left-4 w-4 h-4 border-t border-l border-[#60A5FA] z-10" />
-      <div className="pointer-events-none fixed top-4 right-4 w-4 h-4 border-t border-r border-[#60A5FA] z-10" />
-      <div className="pointer-events-none fixed bottom-4 left-4 w-4 h-4 border-b border-l border-[#60A5FA] z-10" />
-      <div className="pointer-events-none fixed bottom-4 right-4 w-4 h-4 border-b border-r border-[#60A5FA] z-10" />
     </>
   );
 }
@@ -63,7 +54,6 @@ function App() {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const rafRef = useRef(null);
 
-  // Normalized mouse (-0.5 to 0.5)
   useEffect(() => {
     const onMove = (e) => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -78,7 +68,6 @@ function App() {
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
-  // Esc closes section
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") setActive(null);
@@ -96,7 +85,8 @@ function App() {
       {booted && (
         <>
           <NeuralBackground />
-          <HUD mouse={mouse} />
+          <HomeCenterPiece />
+          <HUD />
           <RadialMenu mouse={mouse} onSelect={(k) => setActive(k)} />
           <SoundToggle />
           {ActiveSection && <ActiveSection onClose={() => setActive(null)} />}

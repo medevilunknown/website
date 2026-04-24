@@ -21,6 +21,24 @@ A high-end, immersive 3D website for **OPYO Studio** — a futuristic gaming eco
 - Visual language: glassmorphism, hairline borders, scanlines, corner brackets, code-as-content pseudo-code blocks
 - Motion: parallax cursor, GSAP-less transitions (Tailwind), breathing rings, particle constellation reacting to cursor
 
+## Implemented (v0.3.0 — 2026-04-24, minimalism redesign)
+
+Full cleanup to bitkraft-level minimalism per user feedback ("make the design good and clean just like bitkraft.vc, interactive UI and 3D visuals, don't make it text heavy and cluttered"):
+
+- **Interactive 3D hub**: new draggable wireframe icosahedron at screen center (`HomeCenterPiece.jsx`, imperative R3F) — rotates autonomously, drag to spin with physics momentum + decay
+- **Radial menu redesigned**: removed breathing dashed rings, removed the "select a node" hint, removed glass tiles with icons — now minimal dot + label with subtle underline on hover
+- **Boot loader simplified**: single huge OPYO wordmark, minimal progress line, one-word log, smaller header, "skip" link
+- **HUD cleaned**: removed all corner brackets and pulse dots; kept only top-left OPYO, top-right timestamp, bottom-left "four systems · one ecosystem" tagline
+- **Section shells rebuilt**: whisper-thin top bar (one dot + code + close), hero headline scaled to `text-[88px]` on lg, 4xl body ceiling, generous 20–32 units of whitespace between blocks
+- **All 6 sections rewritten** to minimal form:
+  - Vision — hero + 4 pillar labels, no cards, no pseudo-code
+  - Projects — clean row list (index · name · tagline · status · arrow), Nexus row bigger + flagship badge
+  - People — tall card format with big numeric badge + name/role; no initials
+  - Nexus — 6-item feature list with giant type + hover; 3 minimal live panels (chat / editor / terminal) on a hairline grid
+  - About — 3 mission columns + row-style timeline
+  - Careers — minimal form with giant input text on hairline borders, arrow-style submit
+- **Neural background toned down**: particles reduced 650 → 400, opacity 0.9 → 0.55, edges 0.18 → 0.09
+
 ## Implemented (v0.2.0 — 2026-04-24, ecosystem restructure)
 
 **Restructured from 3 pillars → 4 pillars** at user request:

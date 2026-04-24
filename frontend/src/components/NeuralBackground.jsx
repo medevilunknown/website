@@ -31,15 +31,15 @@ function Scene({ count = 650, radius = 14 }) {
     pGeom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const pMat = new THREE.PointsMaterial({
       color: 0x60a5fa,
-      size: 0.04,
+      size: 0.03,
       sizeAttenuation: true,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.55,
       depthWrite: false,
     });
     const points = new THREE.Points(pGeom, pMat);
 
-    const MAX_EDGES = 1400;
+    const MAX_EDGES = 900;
     const edgeBuffer = new Float32Array(MAX_EDGES * 6);
     const edgeGeom = new THREE.BufferGeometry();
     edgeGeom.setAttribute(
@@ -50,7 +50,7 @@ function Scene({ count = 650, radius = 14 }) {
     const lineMat = new THREE.LineBasicMaterial({
       color: 0x3b82f6,
       transparent: true,
-      opacity: 0.18,
+      opacity: 0.09,
       depthWrite: false,
     });
     const lines = new THREE.LineSegments(edgeGeom, lineMat);
@@ -71,7 +71,6 @@ function Scene({ count = 650, radius = 14 }) {
       velocities,
       edgeBuffer,
       edgeGeom,
-      MAX_EDGES,
       ambient,
       dir,
     };
@@ -99,7 +98,8 @@ function Scene({ count = 650, radius = 14 }) {
     const t = state.clock.elapsedTime;
     const mx = mouse.x * 6;
     const my = mouse.y * 6;
-    const { positions, velocities, edgeBuffer, MAX_EDGES } = s;
+    const { positions, velocities, edgeBuffer } = s;
+    const MAX_EDGES = 900;
 
     for (let i = 0; i < count; i++) {
       const ix = i * 3;
@@ -179,7 +179,7 @@ export default function NeuralBackground() {
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true }}
       >
-        <Scene count={650} radius={14} />
+        <Scene count={400} radius={16} />
       </Canvas>
       <div
         className="absolute inset-0 pointer-events-none"

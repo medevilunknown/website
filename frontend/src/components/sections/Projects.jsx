@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import SectionShell from "../SectionShell";
 import { fetchProjects } from "../../lib/api";
 import { playHover } from "../../hooks/useSound";
+import { ArrowUpRight } from "lucide-react";
 
 const CORE_CODES = ["OPYO.NEXUS", "OPYO.ENGINE", "PRZMO", "OPYO.STUDIOS"];
 
@@ -12,32 +13,7 @@ const FALLBACK = [
   { code: "OPYO.STUDIOS", name: "OPYO Studios", tagline: "Games & publishing.", description: "", category: "STUDIO", status: "LIVE" },
 ];
 
-function StatusPill({ status }) {
-  const isLive = status === "LIVE" || status === "BETA";
-  return (
-    <span
-      className={`px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.25em] ${
-        isLive ? "border-[#60A5FA] text-[#60A5FA]" : "border-[#1E293B] text-[#8B9BB4]"
-      }`}
-    >
-      {status}
-    </span>
-  );
-}
-
-function Corners() {
-  return (
-    <>
-      <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-[#60A5FA]" />
-      <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-[#60A5FA]" />
-      <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-[#60A5FA]" />
-      <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-[#60A5FA]" />
-    </>
-  );
-}
-
-/* Flagship Nexus card — spans full width, multi-panel preview strip */
-function NexusFlagship({ project, hovered, setHovered }) {
+function Row({ project, index, flagship, hovered, setHovered }) {
   const isHover = hovered === project.code;
   return (
     <div
@@ -47,159 +23,42 @@ function NexusFlagship({ project, hovered, setHovered }) {
         playHover();
       }}
       onMouseLeave={() => setHovered(null)}
-      className={`relative glass p-8 md:p-10 cursor-pointer transition-all duration-300 overflow-hidden ${
-        isHover ? "glow-border -translate-y-1" : ""
-      }`}
+      className="border-t border-[#1E293B] group cursor-pointer transition-colors duration-300 hover:border-[#60A5FA] relative"
     >
-      <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
-      <Corners />
-      <div className="relative grid lg:grid-cols-12 gap-8 items-center">
-        <div className="lg:col-span-6">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA]">
-              flagship · 01 · {project.code}
-            </span>
-            <StatusPill status={project.status} />
-          </div>
-          <h3 className="font-display text-4xl md:text-5xl font-semibold mb-4 leading-[1.05]">
+      <div className="py-8 md:py-10 grid grid-cols-12 gap-4 md:gap-8 items-center">
+        <div className="col-span-2 md:col-span-1 font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
+          /{String(index).padStart(2, "0")}
+        </div>
+        <div className="col-span-10 md:col-span-5 flex items-center gap-3">
+          <span
+            className={`font-display font-semibold tracking-tighter transition-colors duration-300 ${
+              flagship
+                ? "text-3xl md:text-5xl lg:text-6xl"
+                : "text-2xl md:text-4xl lg:text-5xl"
+            } ${isHover ? "text-[#60A5FA] glow-text" : "text-[#E8EEF5]"}`}
+            style={{ letterSpacing: "-0.02em" }}
+          >
             {project.name}
-            <span className="text-[#60A5FA] glow-text">.</span>
-          </h3>
-          <p className="text-[#E8EEF5] text-base md:text-lg leading-relaxed mb-4">
-            {project.tagline}
-          </p>
-          <p className="text-[#8B9BB4] leading-relaxed max-w-xl">
-            {project.description}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {["chat", "ide", "terminal", "voice", "plugins", "multi-model"].map((t) => (
-              <span
-                key={t}
-                className="hairline px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-[#8B9BB4]"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
+          </span>
+          {flagship && (
+            <span className="hidden md:inline-block font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA] border border-[#60A5FA] px-2 py-1">
+              flagship
+            </span>
+          )}
         </div>
-
-        {/* Mini multi-panel preview */}
-        <div className="lg:col-span-6">
-          <div className="grid grid-cols-6 gap-2">
-            <div className="col-span-3 hairline p-3 bg-[#060708]/60 h-28">
-              <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#60A5FA] mb-2">chat</div>
-              <div className="font-mono text-[10px] text-[#8B9BB4] space-y-1">
-                <div>you › route via claude</div>
-                <div className="text-[#E8EEF5]">nexus › drafting…</div>
-                <div className="text-[#60A5FA] cursor-blink">&nbsp;</div>
-              </div>
-            </div>
-            <div className="col-span-3 hairline p-3 bg-[#060708]/60 h-28">
-              <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#60A5FA] mb-2">ide</div>
-              <div className="font-mono text-[10px] space-y-0.5">
-                <div><span className="text-[#60A5FA]">const</span> s = broadcast(</div>
-                <div className="pl-2 text-[#E8EEF5]">{'"av1"'}, {'"ultra"'}</div>
-                <div>);</div>
-              </div>
-            </div>
-            <div className="col-span-4 hairline p-3 bg-[#060708]/60 h-24">
-              <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#60A5FA] mb-2">terminal</div>
-              <div className="font-mono text-[10px] text-[#8B9BB4] space-y-0.5">
-                <div className="text-[#60A5FA]">nexus@opyo:~$ pnpm dev</div>
-                <div>▲ engine booting…</div>
-                <div>▲ ws://edge ready</div>
-              </div>
-            </div>
-            <div className="col-span-2 hairline p-3 bg-[#060708]/60 h-24">
-              <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#60A5FA] mb-2">voice</div>
-              <div className="flex items-end gap-[2px] h-10">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 bg-[#3B82F6]"
-                    style={{
-                      height: `${30 + Math.abs(Math.sin(i * 0.8)) * 70}%`,
-                      opacity: 0.4 + (i % 3) * 0.2,
-                      animation: `pulse-dot ${1 + (i % 4) * 0.15}s ease-in-out infinite`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-[#8B9BB4]">
-            <span>the control layer of the opyo ecosystem</span>
-            <span className="text-[#60A5FA]">— open nexus →</span>
-          </div>
+        <div className="hidden md:block col-span-4 text-[#8B9BB4] text-sm md:text-base">
+          {project.tagline}
+        </div>
+        <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-[#8B9BB4]">
+          <span className={isHover ? "text-[#60A5FA]" : ""}>{project.status}</span>
+          <ArrowUpRight
+            size={16}
+            className={`transition-all duration-300 ${
+              isHover ? "text-[#60A5FA] -translate-y-1 translate-x-1" : ""
+            }`}
+          />
         </div>
       </div>
-    </div>
-  );
-}
-
-function CoreCard({ project, index, hovered, setHovered }) {
-  const isHover = hovered === project.code;
-  return (
-    <div
-      data-testid={`project-card-${project.code}`}
-      onMouseEnter={() => {
-        setHovered(project.code);
-        playHover();
-      }}
-      onMouseLeave={() => setHovered(null)}
-      className={`relative glass p-6 md:p-7 cursor-pointer transition-all duration-300 overflow-hidden ${
-        isHover ? "glow-border -translate-y-1" : ""
-      }`}
-      style={{ minHeight: 260 }}
-    >
-      <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
-      <Corners />
-      <div className="relative flex flex-col h-full">
-        <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-[#8B9BB4] mb-5">
-          <span>0{index}</span>
-          <StatusPill status={project.status} />
-        </div>
-        <div className="font-mono text-[10px] tracking-[0.25em] text-[#60A5FA] mb-2">
-          {project.code}
-        </div>
-        <h3 className="font-display text-2xl md:text-3xl font-semibold mb-2">
-          {project.name}
-        </h3>
-        <p className="text-[#8B9BB4] leading-relaxed text-sm">{project.tagline}</p>
-
-        <div
-          className={`mt-4 text-sm text-[#E8EEF5] leading-relaxed overflow-hidden transition-all duration-500 ${
-            isHover ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          {project.description}
-        </div>
-
-        <div className="mt-auto pt-6 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-[#8B9BB4]">
-          <span>{project.category}</span>
-          <span className="text-[#60A5FA]">{isHover ? "— tracing" : "— inspect"}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ExperimentRow({ project, index }) {
-  return (
-    <div
-      data-testid={`project-card-${project.code}`}
-      className="hairline bg-[#0C0E12]/40 p-5 flex items-start justify-between gap-4 hover:border-[#60A5FA] hover:bg-[#0C0E12]/70 transition-colors group"
-    >
-      <div className="flex-1">
-        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#8B9BB4] mb-2">
-          <span>lab/0{index}</span>
-          <span className="text-[#1E293B]">//</span>
-          <span className="text-[#60A5FA]">{project.code}</span>
-        </div>
-        <h4 className="font-display text-lg md:text-xl font-semibold">{project.name}</h4>
-        <p className="text-[#8B9BB4] text-sm mt-1">{project.tagline}</p>
-      </div>
-      <StatusPill status={project.status} />
     </div>
   );
 }
@@ -214,79 +73,70 @@ export default function Projects({ onClose }) {
       .catch(() => setProjects(FALLBACK));
   }, []);
 
-  const core = projects.filter((p) => CORE_CODES.includes(p.code));
-  const ordered = CORE_CODES.map((c) => core.find((p) => p.code === c)).filter(Boolean);
-  const nexus = ordered.find((p) => p.code === "OPYO.NEXUS");
-  const otherCore = ordered.filter((p) => p.code !== "OPYO.NEXUS");
+  const core = CORE_CODES.map((c) =>
+    projects.find((p) => p.code === c)
+  ).filter(Boolean);
   const experiments = projects.filter((p) => !CORE_CODES.includes(p.code));
 
   return (
     <SectionShell
-      code="OPYO.PROJECTS"
+      code="P / 02"
+      eyebrow="Projects"
       title={
         <>
           Four systems.<br />
           <span className="text-[#60A5FA] glow-text">One ecosystem.</span>
         </>
       }
-      tagline="A living catalog of what OPYO is shipping, researching, and inventing. Hover any node to trace it deeper."
+      tagline="Infrastructure · Platform · Tools · Content. A living catalog of what OPYO is shipping, researching, and inventing."
       onClose={onClose}
     >
-      {/* CORE SYSTEMS */}
-      <div className="mb-10 md:mb-12">
+      <div className="mb-20">
         <div className="flex items-end justify-between mb-6">
-          <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA] mb-2">
-              // core systems /&gt;
-            </div>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold">
-              Infrastructure · Platform · Tools · Content
-            </h2>
+          <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#60A5FA]">
+            Core / 01–04
           </div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8B9BB4] hidden md:block">
-            const core = [{ordered.length}]
+          <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
+            {core.length} systems
           </div>
         </div>
-
-        {nexus && (
-          <div className="mb-6">
-            <NexusFlagship project={nexus} hovered={hovered} setHovered={setHovered} />
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-          {otherCore.map((p, i) => (
-            <CoreCard
+        <div>
+          {core.map((p, i) => (
+            <Row
               key={p.code}
               project={p}
-              index={i + 2}
+              index={i + 1}
+              flagship={p.code === "OPYO.NEXUS"}
               hovered={hovered}
               setHovered={setHovered}
             />
           ))}
+          <div className="border-t border-[#1E293B]" />
         </div>
       </div>
 
-      {/* EXPERIMENTS */}
       {experiments.length > 0 && (
         <div>
           <div className="flex items-end justify-between mb-6">
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA] mb-2">
-                // experiments /&gt;
-              </div>
-              <h2 className="font-display text-2xl md:text-3xl font-semibold">
-                Research spikes from OPYO Labs.
-              </h2>
+            <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#60A5FA]">
+              Labs / experiments
             </div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8B9BB4] hidden md:block">
-              labs = [{experiments.length}]
+            <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
+              {experiments.length} concepts
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
             {experiments.map((p, i) => (
-              <ExperimentRow key={p.code} project={p} index={i + 1} />
+              <Row
+                key={p.code}
+                project={p}
+                index={i + 5}
+                flagship={false}
+                hovered={hovered}
+                setHovered={setHovered}
+              />
             ))}
+            <div className="border-t border-[#1E293B]" />
           </div>
         </div>
       )}
