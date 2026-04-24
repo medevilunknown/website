@@ -272,9 +272,11 @@ export default function IntroAnimation({ onDone }) {
 
       {/* Top bar */}
       <div className="relative z-10 flex items-center justify-between px-5 md:px-10 py-5 font-mono text-[10px] md:text-xs uppercase tracking-[0.28em] text-[#8B9BB4]">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA] pulse-dot" />
-          <span className="text-[#E8EEF5]">OPYO</span>
+        <div className="flex items-center gap-3">
+          <Logo size={36} glow className="text-[#E8EEF5]" />
+          <span className="text-[#E8EEF5] text-sm md:text-base font-display font-bold tracking-[0.22em]">
+            OPYO STUDIO
+          </span>
           <span className="text-[#1E293B]">//</span>
           <span>sequence / intro</span>
         </div>
@@ -291,20 +293,45 @@ export default function IntroAnimation({ onDone }) {
       <div className="relative z-10 flex-1 flex items-center justify-center">
         <div className="text-center pointer-events-none select-none">
           <div
-            className="font-display font-bold tracking-tighter leading-[0.85] transition-all duration-1000 ease-out"
+            className="flex items-center justify-center gap-6 md:gap-10 transition-all duration-1000 ease-out"
             style={{
-              fontSize: "clamp(80px, 15vw, 260px)",
               opacity: stage === 0 ? 1 : 0.12,
               transform: stage === 0 ? "scale(1)" : "scale(0.95)",
-              letterSpacing: "-0.04em",
               filter: stage === 0 ? "none" : "blur(4px)",
             }}
           >
-            O<span className="text-[#60A5FA] glow-text">P</span>Y
-            <span className="text-[#60A5FA] glow-text">O</span>
+            <Logo
+              size={220}
+              glow
+              className="hidden md:inline-block text-[#E8EEF5] opacity-95"
+            />
+            <Logo
+              size={120}
+              glow
+              className="md:hidden inline-block text-[#E8EEF5] opacity-95"
+            />
+            <div
+              className="font-display font-bold tracking-tighter leading-[0.85]"
+              style={{
+                fontSize: "clamp(70px, 13vw, 220px)",
+                letterSpacing: "-0.04em",
+              }}
+            >
+              O<span className="text-[#60A5FA] glow-text">P</span>Y
+              <span className="text-[#60A5FA] glow-text">O</span>
+            </div>
           </div>
           <div
-            className="font-display font-semibold tracking-tight leading-tight transition-all duration-700 ease-out mt-6"
+            className="font-mono uppercase tracking-[0.5em] text-[#60A5FA] mt-5 transition-opacity duration-700"
+            style={{
+              fontSize: "clamp(11px, 1.1vw, 16px)",
+              opacity: stage === 0 ? 1 : 0.12,
+            }}
+          >
+            studio
+          </div>
+          <div
+            className="font-display font-semibold tracking-tight leading-tight transition-all duration-700 ease-out mt-10"
             style={{
               fontSize: "clamp(22px, 3.2vw, 52px)",
               opacity: stage >= 1 && stage < 2 ? 1 : 0,

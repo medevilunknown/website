@@ -28,15 +28,15 @@ function HUD() {
   return (
     <>
       <div
-        className="fixed top-5 md:top-8 left-5 md:left-10 z-30 flex items-center gap-3 select-none"
+        className="fixed top-5 md:top-8 left-5 md:left-10 z-30 flex items-center gap-4 select-none"
         data-testid="hud-brand"
       >
-        <Logo size={26} glow />
+        <Logo size={56} glow className="text-[#E8EEF5]" />
         <div className="flex flex-col leading-none">
-          <span className="font-display text-sm md:text-base font-semibold tracking-[0.2em] text-[#E8EEF5]">
+          <span className="font-display text-lg md:text-xl font-bold tracking-[0.22em] text-[#E8EEF5]">
             OPYO
           </span>
-          <span className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.35em] text-[#60A5FA] mt-1">
+          <span className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-[#60A5FA] mt-1.5">
             studio
           </span>
         </div>
