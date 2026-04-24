@@ -113,16 +113,3 @@ export default function IntroAnimation({ onDone }) {
     </div>
   );
 }
-, "0")}
-          </span>
-        </div>
-        <div className="relative h-px w-full bg-[#12161D] overflow-hidden">
-          <div
-            className="absolute inset-y-0 left-0 bg-[#60A5FA]"
-            style={{ width: `${pct}%`, boxShadow: "0 0 12px #60A5FA" }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
