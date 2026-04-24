@@ -21,7 +21,23 @@ A high-end, immersive 3D website for **OPYO Studio** — a futuristic gaming eco
 - Visual language: glassmorphism, hairline borders, scanlines, corner brackets, code-as-content pseudo-code blocks
 - Motion: parallax cursor, GSAP-less transitions (Tailwind), breathing rings, particle constellation reacting to cursor
 
-## Implemented (v0.1.0 — 2026-04-24)
+## Implemented (v0.2.0 — 2026-04-24, ecosystem restructure)
+
+**Restructured from 3 pillars → 4 pillars** at user request:
+- **OPYO Nexus** (flagship): AI workstation — chat, IDE, terminal, voice, plugins, multi-model routing (GPT, Claude, local)
+- **OPYO Engine**: AI streaming infrastructure — broadcast engine, AI moderator, AI streaming partner, smart highlights, avatar system
+- **PRZMO**: Identity & network — gamer profiles, tournaments, creator marketplace, communities
+- **OPYO Studios**: Games & publishing — original IPs, indie publishing
+- Tagline locked: **"Four systems. One ecosystem."**
+
+Changes:
+- Backend seed now **upserts by code** so updated seed data applies on every restart; stale codes are removed
+- Projects section rebuilt: flagship Nexus full-width card with chat/IDE/terminal/voice mini-preview strip + 3 core cards (Engine/PRZMO/Studios) + experiments row
+- Nexus section completely redesigned as AI workstation control center: ChatPanel (streaming messages), Monaco-style CodeEditor (pipeline.ts), xterm-style TerminalPanel (live log), ModelRouter with 4 models + load bars, VoicePanel with waveform, ToolsPanel with 8 plugins. Top ribbon of 6 feature pills.
+- Vision: ecosystem card expanded trio → quad. "Four systems · one ecosystem" badge
+- About timeline updated to reflect 4-system roadmap
+
+## Implemented (v0.1.0 — 2026-04-24, initial MVP)
 - Terminal-style boot loader (ASCII logo, log stream, percentage, SKIP button)
 - Neural-network constellation 3D background (650 particles, dynamic edges, mouse repulsion)
 - Radial circular navigation menu (OPYO core + 6 orbital items: Vision, Projects, People, Nexus, About, Careers)

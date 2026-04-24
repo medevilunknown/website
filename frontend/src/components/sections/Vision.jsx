@@ -11,7 +11,7 @@ export default function Vision({ onClose }) {
           <span className="text-[#60A5FA] glow-text">ecosystems.</span>
         </>
       }
-      tagline="The operating system for games, creators, and players. OPYO is the connective tissue between the next billion players and the infrastructure that holds their worlds together."
+      tagline="The operating system for games, creators, and players. Four systems. One ecosystem. OPYO is the connective tissue between the next billion players and the infrastructure that holds their worlds together."
       onClose={onClose}
     >
       <div className="grid md:grid-cols-2 gap-6 md:gap-8">
@@ -46,29 +46,48 @@ export default function Vision({ onClose }) {
         <div className="md:col-span-2 glass p-8 md:p-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none" />
           <div className="relative">
-            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA] mb-6">
-              the ecosystem /&gt;
+            <div className="flex items-end justify-between mb-6">
+              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA]">
+                the ecosystem /&gt;
+              </div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#E8EEF5] hidden md:block">
+                four systems · one ecosystem
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
               {[
                 {
                   n: "01",
                   t: "Nexus",
-                  d: "AI operating system for creators, streamers, and developers.",
+                  s: "tools",
+                  d: "AI workstation — chat, code, terminal, voice, multi-model routing.",
                 },
                 {
                   n: "02",
-                  t: "Studio",
-                  d: "Publishing label and game development engine.",
+                  t: "Engine",
+                  s: "infra",
+                  d: "AI streaming infrastructure — broadcast, moderation, smart highlights.",
                 },
                 {
                   n: "03",
-                  t: "Platform",
-                  d: "Gamer identity, tournaments, and social network.",
+                  t: "PRZMO",
+                  s: "platform",
+                  d: "Identity, tournaments, marketplace, and community network.",
+                },
+                {
+                  n: "04",
+                  t: "Studios",
+                  s: "content",
+                  d: "Original IPs and selective indie publishing.",
                 },
               ].map((x) => (
                 <div key={x.n} className="hairline p-6 bg-[#0C0E12]/50">
-                  <div className="font-mono text-[10px] text-[#8B9BB4]">/{x.n}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-mono text-[10px] text-[#8B9BB4]">/{x.n}</div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#60A5FA]">
+                      {x.s}
+                    </div>
+                  </div>
                   <div className="font-display text-xl md:text-2xl font-semibold mt-2">
                     {x.t}
                   </div>

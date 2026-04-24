@@ -72,57 +72,66 @@ class CareerApplicationCreate(BaseModel):
 SEED_PROJECTS = [
     {
         "code": "OPYO.NEXUS",
-        "name": "Nexus",
-        "tagline": "The AI Operating System for Gaming.",
-        "description": "A unified OS layer for creators, streamers, and developers — assistive AI agents, live overlays, multi-stream orchestration, and a developer SDK that treats gameplay as a first-class data stream.",
-        "category": "OS",
+        "name": "OPYO Nexus",
+        "tagline": "AI workstation for creators, developers, and streamers.",
+        "description": "A sovereign AI workstation that unifies chat, code, streaming, and automation into one intelligent environment. Context-aware agents, an integrated IDE, a full terminal, voice control, a plugin surface, and multi-model routing across GPT, Claude, and local models.",
+        "category": "WORKSTATION",
         "status": "BETA",
         "order": 1,
     },
     {
-        "code": "OPYO.STUDIO",
-        "name": "Studio",
-        "tagline": "Publishing label for worlds worth living in.",
-        "description": "Incubation and publishing for original titles. From internal experiments to external partnerships — engineered with cinematic ambition and AI-native tooling.",
-        "category": "STUDIO",
-        "status": "LIVE",
+        "code": "OPYO.ENGINE",
+        "name": "OPYO Engine",
+        "tagline": "AI streaming infrastructure.",
+        "description": "Broadcast engine, AI moderator, AI streaming partner, smart highlights, and avatar system — the real-time runtime that turns gameplay into an intelligent stream.",
+        "category": "INFRASTRUCTURE",
+        "status": "IN_DEV",
         "order": 2,
     },
     {
-        "code": "OPYO.PLATFORM",
-        "name": "Platform",
-        "tagline": "Your identity across every game.",
-        "description": "A portable gamer identity, tournament fabric, and social graph built for the next decade of competitive play.",
+        "code": "PRZMO",
+        "name": "PRZMO",
+        "tagline": "Identity and network layer for gaming.",
+        "description": "Gamer profiles, tournaments, creator marketplace, and communities — a portable identity graph that travels with the player across every title in the ecosystem.",
         "category": "PLATFORM",
         "status": "IN_DEV",
         "order": 3,
     },
     {
+        "code": "OPYO.STUDIOS",
+        "name": "OPYO Studios",
+        "tagline": "Games, original IPs, and indie publishing.",
+        "description": "Publishing label for worlds worth living in — original IPs, selective indie publishing, and creator-driven promotion engineered with AI-native tooling.",
+        "category": "STUDIO",
+        "status": "LIVE",
+        "order": 4,
+    },
+    {
         "code": "OPYO.LABS/001",
         "name": "Lucid Engine",
         "tagline": "Realtime narrative agent mesh.",
-        "description": "An experimental AI director that shapes quests, pacing, and dialogue on the fly — a research spike powering future Studio releases.",
+        "description": "An experimental AI director that shapes quests, pacing, and dialogue on the fly — a research spike powering future Studios releases.",
         "category": "EXPERIMENT",
         "status": "CONCEPT",
-        "order": 4,
+        "order": 10,
     },
     {
         "code": "OPYO.LABS/002",
         "name": "Signal",
         "tagline": "Low-latency coach for competitive play.",
-        "description": "On-device analysis for reflex, positioning, and macro decisions. A glimpse at what Nexus becomes when it plays with you, not just around you.",
+        "description": "On-device analysis for reflex, positioning, and macro decisions. A glimpse at what Engine becomes when it plays with you, not just around you.",
         "category": "EXPERIMENT",
         "status": "CONCEPT",
-        "order": 5,
+        "order": 11,
     },
     {
         "code": "OPYO.LABS/003",
         "name": "Arena Protocol",
         "tagline": "Trust fabric for cross-title tournaments.",
-        "description": "A verifiable, publisher-agnostic match layer — the invisible plumbing of OPYO Platform's tournament network.",
+        "description": "A verifiable, publisher-agnostic match layer — the invisible plumbing of PRZMO's tournament network.",
         "category": "EXPERIMENT",
         "status": "CONCEPT",
-        "order": 6,
+        "order": 12,
     },
 ]
 
@@ -201,11 +210,19 @@ logger = logging.getLogger(__name__)
 @app.on_event("startup")
 async def seed_collections():
     try:
-        if await db.projects.count_documents({}) == 0:
-            for p in SEED_PROJECTS:
-                obj = Project(**p).model_dump()
-                await db.projects.insert_one(obj)
-            logger.info("Seeded projects collection")
+        # Upsert projects by `code` so updated seed data is always applied on restart
+        for p in SEED_PROJECTS:
+            obj = Project(**p).model_dump()
+            await db.projects.update_one(
+                {"code": obj["code"]},
+                {"$set": obj},
+                upsert=True,
+            )
+        # Remove any stale projects whose code is no longer in the seed list
+        active_codes = [p["code"] for p in SEED_PROJECTS]
+        await db.projects.delete_many({"code": {"$nin": active_codes}})
+        logger.info("Projects collection upserted from seed")
+
         if await db.people.count_documents({}) == 0:
             for p in SEED_PEOPLE:
                 obj = Person(**p).model_dump()

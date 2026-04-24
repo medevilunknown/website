@@ -3,9 +3,9 @@ import SectionShell from "../SectionShell";
 
 const TIMELINE = [
   { y: "2024", t: "Signal", d: "A small team begins prototyping a coach-as-daemon. First proof that gameplay is data, not just entertainment." },
-  { y: "2025", t: "Nexus", d: "The daemon becomes an OS. Agents, overlays, and moderation ship as a single fabric." },
-  { y: "2026", t: "Studio", d: "OPYO Studio opens as a publishing label. Worlds worth living in — engineered with AI-native tools." },
-  { y: "soon", t: "Platform", d: "A portable identity, trust layer, and tournament fabric for the next decade of play." },
+  { y: "2025", t: "Nexus", d: "The AI workstation takes shape — chat, IDE, terminal, voice, and multi-model routing in one sovereign environment." },
+  { y: "2026", t: "Engine + Studios", d: "OPYO Engine ships the streaming runtime. OPYO Studios opens as a publishing label — worlds worth living in, engineered with AI-native tools." },
+  { y: "soon", t: "PRZMO", d: "Identity, tournaments, marketplace, and community — a portable gamer graph built for the next decade of play." },
 ];
 
 export default function About({ onClose }) {
