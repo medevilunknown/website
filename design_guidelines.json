@@ -1,0 +1,130 @@
+{
+  "theme": "dark",
+  "archetype": "Futuristic OS (Blue/Black/White)",
+  "typography": {
+    "heading_font": "Chakra Petch",
+    "heading_weights": [600, 700],
+    "body_font": "IBM Plex Sans",
+    "body_weights": [400, 500],
+    "mono_font": "JetBrains Mono",
+    "mono_weights": [400, 700],
+    "scale": {
+      "h1": "text-5xl sm:text-6xl+ tracking-tighter",
+      "h2": "text-3xl sm:text-4xl tracking-tight",
+      "h3": "text-xl sm:text-2xl",
+      "body": "text-base leading-relaxed",
+      "code": "text-xs sm:text-sm tracking-widest uppercase"
+    }
+  },
+  "colors": {
+    "background": {
+      "primary": "#060708",
+      "panel": "#0C0E12",
+      "elevated": "#12161D"
+    },
+    "text": {
+      "primary": "#E8EEF5",
+      "muted": "#8B9BB4",
+      "inverse": "#060708"
+    },
+    "brand": {
+      "accent_core": "#3B82F6",
+      "accent_glow": "#60A5FA",
+      "border_hairline": "#1E293B"
+    }
+  },
+  "layout_and_surfaces": {
+    "glassmorphism": "backdrop-blur-xl bg-[#0C0E12]/60 border border-white/5 shadow-[0_0_30px_rgba(59,130,246,0.05)]",
+    "panel_radius": "rounded-none",
+    "spacing_scale": "generous",
+    "container_padding": "p-8 md:p-12"
+  },
+  "components": {
+    "radial_menu": {
+      "radius": "250px",
+      "item_count": 6,
+      "items": ["Vision", "Projects", "People", "Nexus", "About", "Careers"],
+      "hover_effect": "scale-110 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)]",
+      "icons": "lucide-react (e.g., Eye, Grid, Users, Cpu, Info, Briefcase)"
+    },
+    "boot_loader": {
+      "stages": [
+        "Blinking cursor",
+        "Pseudo-code initialization log",
+        "ASCII OPYO logo render",
+        "Percentage counter 0-100% with SKIP button"
+      ]
+    },
+    "careers_form": {
+      "shadcn_components": ["Form", "Input", "Textarea", "Button"],
+      "aesthetic": "Wrapped in code-as-content mono text block, minimal borders, glow on focus"
+    }
+  },
+  "motion_and_3d": {
+    "background_scene": {
+      "type": "Neural Network Constellation",
+      "particle_count": 2000,
+      "colors": ["#3B82F6", "#60A5FA"],
+      "interaction": "Mouse cursor repels nodes (spring physics), continuous slow rotation",
+      "camera": "PerspectiveCamera, slight parallax movement on pointer move",
+      "lighting": "Ambient soft blue + directional white"
+    },
+    "transitions": {
+      "page_enter": "GSAP zoom-in on central radial hub, scaling to infinity, fading into section content",
+      "scroll": "Lenis smooth scrolling with momentum"
+    }
+  },
+  "audio": {
+    "hover": "Sine wave, 800Hz, 50ms, low volume",
+    "click": "Triangle wave, 200Hz descending to 100Hz, 150ms",
+    "boot": "Fast mechanical tick sequence"
+  },
+  "testing": {
+    "data_testid_convention": "kebab-case, role-based (e.g., 'radial-menu-item-vision', 'careers-submit-button', 'boot-skip-button')"
+  },
+  "media": {
+    "nexus_dashboard": [
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/158c3fa3-f7d0-4ee5-8d30-662f67c0a9d6/images/34fc5114928f283157aefdce6a20d2c34fe27c746dca801cf7035c022a48978d.png",
+        "description": "Futuristic holographic AI OS dashboard",
+        "category": "nexus_section_visual"
+      },
+      {
+        "url": "https://images.pexels.com/photos/27141316/pexels-photo-27141316.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Digital interface showing futuristic graphs",
+        "category": "nexus_data_visual"
+      }
+    ],
+    "projects": [
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/158c3fa3-f7d0-4ee5-8d30-662f67c0a9d6/images/74880354e878421dea9b68be01d0fa29528d50cb842b1e15f986d038892599b5.png",
+        "description": "Cinematic sci-fi game environment in electric blue",
+        "category": "projects_showcase_1"
+      }
+    ],
+    "people": [
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/158c3fa3-f7d0-4ee5-8d30-662f67c0a9d6/images/fc497625b6bdc761bc7bc409dbcf2028b3adaed021eb9db1c65bf6d1732bed5c.png",
+        "description": "Cinematic portrait tech professional blue rim light",
+        "category": "people_avatar_1"
+      },
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/158c3fa3-f7d0-4ee5-8d30-662f67c0a9d6/images/e1eeaab42310bd8419a2eb06bc35c39736ce98fa5902d2b83c13897459703105.png",
+        "description": "Cinematic portrait VR headset blue screen",
+        "category": "people_avatar_2"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Install required fonts: Chakra Petch, IBM Plex Sans, JetBrains Mono via Google Fonts.",
+    "Implement the boot loader using pure CSS animations or Framer Motion/GSAP before showing the main R3F canvas.",
+    "The main navigation MUST be a radial circular menu replacing the traditional header nav.",
+    "Use react-three-fiber and @react-three/drei for the Neural Network Constellation background.",
+    "Use shadcn/ui components for the Careers form but heavily customize them to remove borders and apply glassmorphism.",
+    "Wrap sections and key panels in 'code-as-content' style text blocks using JetBrains Mono text-xs text-blue-500.",
+    "Integrate Web Audio API for hover/click/boot sound effects as specified.",
+    "Strictly adhere to the Blue/Black/White color palette. No purple, violet, or cyan.",
+    "All interactive elements MUST have data-testid attributes.",
+    "Ensure the JSON file path `/app/design_guidelines.json` is handed off."
+  ]
+}
