@@ -24,9 +24,25 @@ export default function Careers({ onClose }) {
 
   const onChange = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  const validate = () => {
+    if (!form.name || form.name.trim().length < 2) return "Name must be at least 2 characters.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      return "Please enter a valid email address.";
+    if (!form.role || form.role.trim().length < 2) return "Role is required.";
+    if (!form.message || form.message.trim().length < 10)
+      return "Message must be at least 10 characters.";
+    return null;
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     if (status === "submitting") return;
+    const clientError = validate();
+    if (clientError) {
+      setError(clientError);
+      setStatus("error");
+      return;
+    }
     setError("");
     setStatus("submitting");
     playClick();
@@ -148,6 +164,7 @@ export default function Careers({ onClose }) {
         {/* RIGHT: form */}
         <form
           onSubmit={submit}
+          noValidate
           className="lg:col-span-7 glass p-6 md:p-8 space-y-6 relative"
           data-testid="careers-form"
         >
