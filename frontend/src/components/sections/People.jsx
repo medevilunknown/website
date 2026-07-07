@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import SectionShell from "../SectionShell";
 import Reveal from "../Reveal";
-import { fetchPeople } from "../../lib/api";
 
-const FALLBACK = [
+/**
+ * People — the crew. Rendered from local data (no backend dependency), so the
+ * page is always resilient and matches the other static sections.
+ */
+const PEOPLE = [
   { name: "Operator 01", role: "Founder & CEO", bio: "Platform architect." },
   { name: "Operator 02", role: "CTO", bio: "Streaming & infra." },
   { name: "Operator 03", role: "Head of Community", bio: "Campus network." },
@@ -19,24 +22,20 @@ function Avatar({ index }) {
       className="w-full aspect-[4/5] flex items-end p-6 relative overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 20%, rgba(59,130,246,0.22), transparent 65%), linear-gradient(180deg, #0C0E12 0%, #060708 100%)",
+          "radial-gradient(ellipse at 50% 20%, rgba(91,120,255,0.22), transparent 65%), linear-gradient(180deg, #12141d 0%, #0E1016 100%)",
       }}
     >
       <div
         className="absolute inset-0 opacity-[0.08]"
         style={{
           backgroundImage:
-            "linear-gradient(0deg, transparent 96%, rgba(96,165,250,0.4) 100%), linear-gradient(90deg, transparent 96%, rgba(96,165,250,0.4) 100%)",
+            "linear-gradient(0deg, transparent 96%, rgba(91,120,255,0.4) 100%), linear-gradient(90deg, transparent 96%, rgba(91,120,255,0.4) 100%)",
           backgroundSize: "24px 24px",
         }}
       />
-      <div
-        className="absolute top-5 left-5 font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA]"
-      >
-        /{num}
-      </div>
+      <div className="lbl absolute top-5 left-5 text-sm text-[#C89B3C]">/{num}</div>
       <span
-        className="relative font-display font-bold text-[#E8EEF5] glow-text"
+        className="relative font-display text-[#ECEAF2] glow-text"
         style={{ fontSize: "clamp(64px, 11vw, 140px)", lineHeight: 0.8, letterSpacing: "-0.04em" }}
       >
         {num}
@@ -45,15 +44,7 @@ function Avatar({ index }) {
   );
 }
 
-export default function People({ onClose }) {
-  const [people, setPeople] = useState([]);
-
-  useEffect(() => {
-    fetchPeople()
-      .then((d) => setPeople(d?.length ? d : FALLBACK))
-      .catch(() => setPeople(FALLBACK));
-  }, []);
-
+export default function People() {
   return (
     <SectionShell
       code="PPL / 03"
@@ -61,30 +52,26 @@ export default function People({ onClose }) {
       title={
         <>
           The<br />
-          <span className="text-[#60A5FA] glow-text">operators.</span>
+          <span className="text-[#5B78FF] glow-text">operators.</span>
         </>
       }
       tagline="A small crew building the identity backbone of collegiate esports."
-      onClose={onClose}
       accent="#4E7C7A"
     >
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-        {people.map((p, i) => (
-          <Reveal
-            key={p.id || i}
-            index={i % 3}
-            className="group cursor-pointer"
-          >
-            <div data-testid={`person-card-${i}`} className="transition-transform duration-300 group-hover:-translate-y-1.5">
+        {PEOPLE.map((p, i) => (
+          <Reveal key={p.name} index={i % 3} className="group cursor-pointer">
+            <div
+              data-testid={`person-card-${i}`}
+              className="transition-transform duration-300 group-hover:-translate-y-1.5"
+            >
               <Avatar index={i} />
               <div className="pt-5 border-t border-[#1E293B] group-hover:border-[#5B78FF] transition-colors">
-                <div className="flex items-baseline justify-between mb-2">
-                  <div
-                    className="font-display text-xl md:text-2xl text-[#E8EEF5] group-hover:text-[#5B78FF] transition-colors"
-                    style={{ letterSpacing: "-0.01em" }}
-                  >
-                    {p.name}
-                  </div>
+                <div
+                  className="font-display text-xl md:text-2xl text-[#E8EEF5] group-hover:text-[#5B78FF] transition-colors mb-2"
+                  style={{ letterSpacing: "-0.01em" }}
+                >
+                  {p.name}
                 </div>
                 <div className="lbl text-sm text-[#C89B3C]">{p.role}</div>
               </div>
