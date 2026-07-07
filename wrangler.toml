@@ -1,7 +1,7 @@
 # Cloudflare Workers static-assets deploy for the OPYO STUDIO site.
 # The build command produces frontend/build; wrangler uploads it as static
 # assets with SPA fallback (so /brand and refreshes resolve to index.html).
-name = "opyo-studio"
+name = "opyostudio"
 compatibility_date = "2025-06-01"
 
 [assets]
