@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SectionShell from "../SectionShell";
+import { TerminalArt } from "../HeroArt";
 import { submitApplication } from "../../lib/api";
 import { playClick } from "../../hooks/useSound";
 import { Check, ArrowRight } from "lucide-react";
@@ -67,7 +68,7 @@ export default function Careers({ onClose }) {
   if (status === "success") {
     return (
       <SectionShell
-        code="C / 06"
+        code="C / 05"
         eyebrow="Careers"
         title={
           <>
@@ -113,7 +114,7 @@ export default function Careers({ onClose }) {
 
   return (
     <SectionShell
-      code="C / 06"
+      code="C / 05"
       eyebrow="Careers"
       title={
         <>
@@ -123,6 +124,8 @@ export default function Careers({ onClose }) {
       }
       tagline="We hire slowly and with care. Tell us what you've built and what you want to build next."
       onClose={onClose}
+      accent="#C89B3C"
+      hero={<TerminalArt />}
     >
       <form
         onSubmit={submit}

@@ -19,33 +19,44 @@ function CenterPiece() {
       const geo = new THREE.IcosahedronGeometry(2.2, 1);
       const edges = new THREE.EdgesGeometry(geo);
       const lineMat = new THREE.LineBasicMaterial({
-        color: 0x60a5fa,
+        color: 0x5b78ff, // Signal Blue
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.85,
       });
       const wire = new THREE.LineSegments(edges, lineMat);
 
       // Inner filled icosahedron with low opacity
       const innerMat = new THREE.MeshBasicMaterial({
-        color: 0x0b1220,
+        color: 0x12141d,
         transparent: true,
         opacity: 0.55,
       });
       const solid = new THREE.Mesh(geo, innerMat);
 
+      // Glowing vertex nodes — the ecosystem's connection points
+      const pointsMat = new THREE.PointsMaterial({
+        color: 0xc89b3c, // Crown gold
+        size: 0.12,
+        transparent: true,
+        opacity: 0.9,
+        sizeAttenuation: true,
+      });
+      const points = new THREE.Points(geo, pointsMat);
+
       // Halo — larger translucent icosahedron
       const haloGeo = new THREE.IcosahedronGeometry(2.45, 1);
       const haloEdges = new THREE.EdgesGeometry(haloGeo);
       const haloMat = new THREE.LineBasicMaterial({
-        color: 0x3b82f6,
+        color: 0x2a3bbc, // Opyo Blue
         transparent: true,
-        opacity: 0.18,
+        opacity: 0.2,
       });
       const halo = new THREE.LineSegments(haloEdges, haloMat);
 
       const group = new THREE.Group();
       group.add(solid);
       group.add(wire);
+      group.add(points);
       group.add(halo);
       scene.add(group);
       meshRef.current = { group, wire, solid, halo };
@@ -121,7 +132,7 @@ export default function HomeCenterPiece() {
       style={{ zIndex: 5 }}
       data-testid="home-centerpiece"
     >
-      <div style={{ width: "min(60vw, 600px)", height: "min(60vw, 600px)" }}>
+      <div style={{ width: "min(42vw, 430px)", height: "min(42vw, 430px)", opacity: 0.75 }}>
         <Canvas
           camera={{ position: [0, 0, 7], fov: 45 }}
           dpr={[1, 1.5]}

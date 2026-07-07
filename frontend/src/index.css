@@ -1,20 +1,28 @@
 @import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pirata+One&family=Permanent+Marker&family=Kalam:wght@300;400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* OPYO Tokens */
-  --opyo-bg: #060708;
-  --opyo-panel: #0c0e12;
-  --opyo-elevated: #12161d;
-  --opyo-fg: #e8eef5;
-  --opyo-muted: #8b9bb4;
-  --opyo-accent: #3b82f6;
-  --opyo-accent-glow: #60a5fa;
+  /* OPYO Brand Book tokens */
+  --opyo-bg: #0e1016; /* Abyss */
+  --opyo-panel: #161a26;
+  --opyo-elevated: #12141d;
+  --opyo-fg: #eceaf2; /* bone-white */
+  --opyo-muted: #9aa0b4;
+  --opyo-accent: #5b78ff; /* Signal Blue */
+  --opyo-accent-glow: #5b78ff;
   --opyo-border: #1e293b;
   --opyo-hairline: rgba(232, 238, 245, 0.07);
+  /* Full palette */
+  --opyo-blue: #2a3bbc; /* Opyo Blue */
+  --opyo-signal: #5b78ff;
+  --opyo-crown: #c89b3c; /* earned gold */
+  --opyo-blood: #a8433f;
+  --opyo-bone: #ede4ce;
+  --opyo-ink: #141118;
 }
 
 html,
@@ -29,19 +37,77 @@ body,
 
 body {
   margin: 0;
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  /* Brand body — Kalam (handwritten) */
+  font-family: "Kalam", "IBM Plex Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   cursor: default;
 }
 
+/* Display — Pirata One (gothic, the wordmark voice) */
 .font-display {
-  font-family: "Chakra Petch", sans-serif;
-  letter-spacing: -0.01em;
+  font-family: "Pirata One", system-ui, cursive;
+  letter-spacing: 0.01em;
 }
 
+/* Labels / callouts — Permanent Marker (hand-inked) */
+.font-marker,
+.lbl {
+  font-family: "Permanent Marker", cursive;
+  letter-spacing: 0.02em;
+}
+
+/* Kept monospace for the boot/code sequence and technical readouts */
 .font-mono {
   font-family: "JetBrains Mono", monospace;
+}
+
+/* Brand dot-grid textures */
+.brand-dots {
+  background-image: radial-gradient(
+    rgba(122, 138, 196, 0.06) 1.2px,
+    transparent 1.3px
+  );
+  background-size: 22px 22px;
+}
+.brand-dots-light {
+  background-image: radial-gradient(
+    rgba(28, 22, 12, 0.05) 1.3px,
+    transparent 1.4px
+  );
+  background-size: 18px 18px;
+}
+
+/* Orbital navigation rings */
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orbit-spin-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+.orbit-ring {
+  animation: orbit-spin 90s linear infinite;
+}
+.orbit-ring-rev {
+  animation: orbit-spin-rev 130s linear infinite;
+}
+@keyframes core-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    letter-spacing: 0.02em;
+  }
+  50% {
+    opacity: 1;
+    letter-spacing: 0.06em;
+  }
+}
+.core-pulse {
+  animation: core-pulse 5s ease-in-out infinite;
 }
 
 /* Thin scrollbar */

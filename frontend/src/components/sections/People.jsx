@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import SectionShell from "../SectionShell";
+import Reveal from "../Reveal";
 import { fetchPeople } from "../../lib/api";
 
 const FALLBACK = [
-  { name: "Operator 01", role: "Founder & CEO", bio: "System architect." },
-  { name: "Operator 02", role: "CTO", bio: "Runtime & AI infra." },
-  { name: "Operator 03", role: "Head of Studio", bio: "Narrative design." },
+  { name: "Operator 01", role: "Founder & CEO", bio: "Platform architect." },
+  { name: "Operator 02", role: "CTO", bio: "Streaming & infra." },
+  { name: "Operator 03", role: "Head of Community", bio: "Campus network." },
   { name: "Operator 04", role: "Head of Platform", bio: "Identity & trust." },
-  { name: "Operator 05", role: "Director, Nexus", bio: "Agentic UX." },
-  { name: "Operator 06", role: "Design Lead", bio: "Human-system interfaces." },
+  { name: "Operator 05", role: "Head of Strem0", bio: "Creator tooling." },
+  { name: "Operator 06", role: "Design Lead", bio: "Player-first interfaces." },
 ];
 
 function Avatar({ index }) {
@@ -63,31 +64,32 @@ export default function People({ onClose }) {
           <span className="text-[#60A5FA] glow-text">operators.</span>
         </>
       }
-      tagline="A small cell building the infrastructure behind the ecosystem."
+      tagline="A small crew building the identity backbone of collegiate esports."
       onClose={onClose}
+      accent="#4E7C7A"
     >
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
         {people.map((p, i) => (
-          <div
+          <Reveal
             key={p.id || i}
-            data-testid={`person-card-${i}`}
-            className="group"
+            index={i % 3}
+            className="group cursor-pointer"
           >
-            <Avatar index={i} />
-            <div className="pt-5 border-t border-[#1E293B] group-hover:border-[#60A5FA] transition-colors">
-              <div className="flex items-baseline justify-between mb-2">
-                <div
-                  className="font-display text-lg md:text-xl font-semibold text-[#E8EEF5]"
-                  style={{ letterSpacing: "-0.01em" }}
-                >
-                  {p.name}
+            <div data-testid={`person-card-${i}`} className="transition-transform duration-300 group-hover:-translate-y-1.5">
+              <Avatar index={i} />
+              <div className="pt-5 border-t border-[#1E293B] group-hover:border-[#5B78FF] transition-colors">
+                <div className="flex items-baseline justify-between mb-2">
+                  <div
+                    className="font-display text-xl md:text-2xl text-[#E8EEF5] group-hover:text-[#5B78FF] transition-colors"
+                    style={{ letterSpacing: "-0.01em" }}
+                  >
+                    {p.name}
+                  </div>
                 </div>
-              </div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-[#60A5FA]">
-                {p.role}
+                <div className="lbl text-sm text-[#C89B3C]">{p.role}</div>
               </div>
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
     </SectionShell>

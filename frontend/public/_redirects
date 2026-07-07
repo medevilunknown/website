@@ -1,0 +1,3 @@
+# Cloudflare Pages / Netlify SPA fallback — serve index.html for client routes
+# (e.g. /brand) so deep links and refreshes work.
+/*    /index.html   200

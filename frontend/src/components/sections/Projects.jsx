@@ -1,145 +1,178 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SectionShell from "../SectionShell";
-import { fetchProjects } from "../../lib/api";
-import { playHover } from "../../hooks/useSound";
+import { playHover, playClick } from "../../hooks/useSound";
 import { ArrowUpRight } from "lucide-react";
 
-const CORE_CODES = ["OPYO.NEXUS", "OPYO.ENGINE", "PRZMO", "OPYO.STUDIOS"];
-
-const FALLBACK = [
-  { code: "OPYO.NEXUS", name: "OPYO Nexus", tagline: "AI workstation.", description: "", category: "WORKSTATION", status: "BETA" },
-  { code: "OPYO.ENGINE", name: "OPYO Engine", tagline: "AI streaming infrastructure.", description: "", category: "INFRASTRUCTURE", status: "IN_DEV" },
-  { code: "PRZMO", name: "PRZMO", tagline: "Identity & network.", description: "", category: "PLATFORM", status: "IN_DEV" },
-  { code: "OPYO.STUDIOS", name: "OPYO Studios", tagline: "Games & publishing.", description: "", category: "STUDIO", status: "LIVE" },
+/**
+ * Products — the OPYO ecosystem, laid out in a BITKRAFT-style editorial stack:
+ * big type, thin dividers, small-caps meta, a thesis line per product and its
+ * feature set. Three products: OPYO (social), Strem0 (streaming), Games.
+ */
+const PRODUCTS = [
+  {
+    code: "OPYO",
+    route: "opyo",
+    name: "OPYO",
+    kicker: "Social platform",
+    status: "LIVE",
+    flagship: true,
+    tagline: "The social layer for gamers.",
+    body:
+      "One verified Gamer ID that follows you across every title — ranked history, campus pride, and a feed built for players, not platforms. The reputation network for a generation of gamers.",
+    features: [
+      "Verified Gamer ID",
+      "Campus communities",
+      "Ranked history",
+      "Squads & clubs",
+      "Tournaments",
+      "Crown economy",
+    ],
+  },
+  {
+    code: "STREM0",
+    route: "strem0",
+    name: "Strem0",
+    kicker: "Streaming engine",
+    status: "BETA",
+    flagship: false,
+    tagline: "Your entire streaming studio.",
+    body:
+      "Everything a creator gets from Streamlabs — and then some — built into OPYO. Go live from desktop, cloud, or mobile with pro overlays, alerts, and multistream to every platform at once.",
+    features: [
+      "Overlays & scenes",
+      "Alerts & widgets",
+      "Multistream everywhere",
+      "Chat box & moderation",
+      "Tips, donations & merch",
+      "Stream analytics",
+      "Cloud + desktop + mobile",
+      "Themes & templates",
+    ],
+  },
+  {
+    code: "GAMES",
+    route: "games",
+    name: "Games",
+    kicker: "Publishing",
+    status: "SOON",
+    flagship: false,
+    tagline: "Made by players, published by OPYO.",
+    body:
+      "Our next chapter: a publishing label backing student studios from campus to launch. Incubation, funding, and distribution for the games our community is already dreaming up.",
+    features: ["Student studios", "Incubation", "Funding", "Distribution"],
+  },
 ];
 
-function Row({ project, index, flagship, hovered, setHovered }) {
-  const isHover = hovered === project.code;
+function ProductBlock({ product, index, onSelect }) {
+  const [hover, setHover] = useState(false);
   return (
-    <div
-      data-testid={`project-card-${project.code}`}
+    <button
+      type="button"
+      data-testid={`product-block-${product.code}`}
       onMouseEnter={() => {
-        setHovered(project.code);
+        setHover(true);
         playHover();
       }}
-      onMouseLeave={() => setHovered(null)}
-      className="border-t border-[#1E293B] group cursor-pointer transition-colors duration-300 hover:border-[#60A5FA] relative"
+      onMouseLeave={() => setHover(false)}
+      onClick={() => {
+        playClick();
+        onSelect?.(product.route);
+      }}
+      className="group block w-full text-left border-t border-[#1E293B] transition-colors duration-300 hover:border-[#60A5FA] py-10 md:py-16"
     >
-      <div className="py-8 md:py-10 grid grid-cols-12 gap-4 md:gap-8 items-center">
-        <div className="col-span-2 md:col-span-1 font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
-          /{String(index).padStart(2, "0")}
-        </div>
-        <div className="col-span-10 md:col-span-5 flex items-center gap-3">
-          <span
-            className={`font-display font-semibold tracking-tighter transition-colors duration-300 ${
-              flagship
-                ? "text-3xl md:text-5xl lg:text-6xl"
-                : "text-2xl md:text-4xl lg:text-5xl"
-            } ${isHover ? "text-[#60A5FA] glow-text" : "text-[#E8EEF5]"}`}
-            style={{ letterSpacing: "-0.02em" }}
-          >
-            {project.name}
+      <div className="grid grid-cols-12 gap-6 md:gap-10">
+        {/* Left meta rail */}
+        <div className="col-span-12 md:col-span-3 flex md:flex-col items-baseline md:items-start justify-between gap-3">
+          <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
+            /{String(index).padStart(2, "0")}
           </span>
-          {flagship && (
-            <span className="hidden md:inline-block font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA] border border-[#60A5FA] px-2 py-1">
-              flagship
-            </span>
-          )}
-        </div>
-        <div className="hidden md:block col-span-4 text-[#8B9BB4] text-sm md:text-base">
-          {project.tagline}
-        </div>
-        <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-[#8B9BB4]">
-          <span className={isHover ? "text-[#60A5FA]" : ""}>{project.status}</span>
-          <ArrowUpRight
-            size={16}
-            className={`transition-all duration-300 ${
-              isHover ? "text-[#60A5FA] -translate-y-1 translate-x-1" : ""
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA]">
+            {product.kicker}
+          </span>
+          <span
+            className={`font-mono text-[10px] uppercase tracking-[0.28em] ${
+              product.status === "LIVE" ? "text-[#60A5FA]" : "text-[#8B9BB4]"
             }`}
-          />
+          >
+            {product.status}
+          </span>
+        </div>
+
+        {/* Main column */}
+        <div className="col-span-12 md:col-span-9">
+          <div className="flex items-center gap-4 flex-wrap">
+            <span
+              className={`font-display font-semibold tracking-tighter transition-colors duration-300 ${
+                product.flagship
+                  ? "text-5xl md:text-7xl lg:text-8xl"
+                  : "text-4xl md:text-6xl lg:text-7xl"
+              } ${hover ? "text-[#60A5FA] glow-text" : "text-[#E8EEF5]"}`}
+              style={{ letterSpacing: "-0.03em" }}
+            >
+              {product.name}
+            </span>
+            {product.flagship && (
+              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#60A5FA] border border-[#60A5FA] px-2 py-1">
+                flagship
+              </span>
+            )}
+            <ArrowUpRight
+              size={28}
+              className={`transition-all duration-300 ${
+                hover
+                  ? "text-[#60A5FA] -translate-y-1 translate-x-1"
+                  : "text-[#8B9BB4]"
+              }`}
+            />
+          </div>
+
+          <div
+            className="mt-5 font-display text-2xl md:text-3xl text-[#E8EEF5] leading-[1.15]"
+            style={{ letterSpacing: "-0.015em" }}
+          >
+            {product.tagline}
+          </div>
+
+          <p className="mt-4 max-w-2xl text-[#8B9BB4] text-base md:text-lg leading-relaxed">
+            {product.body}
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-x-3 gap-y-3">
+            {product.features.map((f) => (
+              <span
+                key={f}
+                className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#8B9BB4] border border-[#1E293B] px-3 py-2 transition-colors group-hover:border-[#60A5FA]/40"
+              >
+                {f}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
-export default function Projects({ onClose }) {
-  const [projects, setProjects] = useState([]);
-  const [hovered, setHovered] = useState(null);
-
-  useEffect(() => {
-    fetchProjects()
-      .then((d) => setProjects(d?.length ? d : FALLBACK))
-      .catch(() => setProjects(FALLBACK));
-  }, []);
-
-  const core = CORE_CODES.map((c) =>
-    projects.find((p) => p.code === c)
-  ).filter(Boolean);
-  const experiments = projects.filter((p) => !CORE_CODES.includes(p.code));
-
+export default function Projects({ onClose, onSelect }) {
   return (
     <SectionShell
       code="P / 02"
-      eyebrow="Projects"
+      eyebrow="Products"
       title={
         <>
-          Four systems.<br />
-          <span className="text-[#60A5FA] glow-text">One ecosystem.</span>
+          One ecosystem.<br />
+          <span className="text-[#60A5FA] glow-text">Every gamer.</span>
         </>
       }
-      tagline="Infrastructure · Platform · Tools · Content. A living catalog of what OPYO is shipping, researching, and inventing."
+      tagline="OPYO connects play, streaming, and publishing into a single identity. The social network, the streaming engine, and the games label — built for collegiate esports."
       onClose={onClose}
     >
-      <div className="mb-20">
-        <div className="flex items-end justify-between mb-6">
-          <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#60A5FA]">
-            Core / 01–04
-          </div>
-          <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
-            {core.length} systems
-          </div>
-        </div>
-        <div>
-          {core.map((p, i) => (
-            <Row
-              key={p.code}
-              project={p}
-              index={i + 1}
-              flagship={p.code === "OPYO.NEXUS"}
-              hovered={hovered}
-              setHovered={setHovered}
-            />
-          ))}
-          <div className="border-t border-[#1E293B]" />
-        </div>
+      <div>
+        {PRODUCTS.map((p, i) => (
+          <ProductBlock key={p.code} product={p} index={i + 1} onSelect={onSelect} />
+        ))}
+        <div className="border-t border-[#1E293B]" />
       </div>
-
-      {experiments.length > 0 && (
-        <div>
-          <div className="flex items-end justify-between mb-6">
-            <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#60A5FA]">
-              Labs / experiments
-            </div>
-            <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8B9BB4]">
-              {experiments.length} concepts
-            </div>
-          </div>
-          <div>
-            {experiments.map((p, i) => (
-              <Row
-                key={p.code}
-                project={p}
-                index={i + 5}
-                flagship={false}
-                hovered={hovered}
-                setHovered={setHovered}
-              />
-            ))}
-            <div className="border-t border-[#1E293B]" />
-          </div>
-        </div>
-      )}
     </SectionShell>
   );
 }

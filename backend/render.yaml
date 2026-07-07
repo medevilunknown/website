@@ -1,0 +1,20 @@
+# Render blueprint for the OPYO API (FastAPI).
+# Deploy: push repo to GitHub, then Render → New → Blueprint → pick this file.
+# MongoDB is external — create a free MongoDB Atlas cluster and paste its URI
+# into the MONGO_URL env var (set as a secret in the Render dashboard).
+services:
+  - type: web
+    name: opyo-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: MONGO_URL
+        sync: false # set in dashboard: mongodb+srv://user:pass@cluster/...
+      - key: DB_NAME
+        value: opyo
+      - key: CORS_ORIGINS
+        value: https://opyostudio.com,https://www.opyostudio.com
