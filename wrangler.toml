@@ -4,6 +4,13 @@
 name = "opyostudio"
 compatibility_date = "2025-06-01"
 
+# Attach the custom domain on deploy (zone is in the same account, so wrangler
+# provisions the DNS record + TLS cert automatically).
+routes = [
+  { pattern = "opyostudio.com", custom_domain = true },
+  { pattern = "www.opyostudio.com", custom_domain = true },
+]
+
 [assets]
 directory = "./frontend/build"
 not_found_handling = "single-page-application"
